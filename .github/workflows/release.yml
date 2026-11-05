@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build Windows binaries
+        env:
+          GOOS: windows
+          CGO_ENABLED: "0"
+        run: |
+          GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o RemoveEdge-x64.exe .
+          GOARCH=arm64 go build -trimpath -ldflags "-s -w" -o RemoveEdge-arm64.exe .
+          sha256sum RemoveEdge-*.exe > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            RemoveEdge-x64.exe RemoveEdge-arm64.exe SHA256SUMS.txt \
+            --title "RemoveEdge $GITHUB_REF_NAME" \
+            --generate-notes
