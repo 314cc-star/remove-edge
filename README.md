@@ -2,7 +2,7 @@
 
 Free, open-source tool to uninstall Microsoft Edge (Chromium) from Windows 10 and 11, even when the Uninstall button in Settings is greyed out.
 
-**Website:** https://YOUR_PROJECT.vercel.app
+**Website:** https://remove-edge.vercel.app
 
 ## Download
 
